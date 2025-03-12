@@ -100,4 +100,81 @@ public class DataUtilitiesTest {
 		double result = DataUtilities.calculateColumnTotal(zeroValues, 0);
 		assertEquals("Column total should be 5.0 when zeros are present", 5.0, result, 0.0000001d);
 	}
+
+	/**
+	 * Test calculateRowTotal with valid data.
+	 */
+	@Test
+	public void testCalculateRowTotalValidData() {
+		double result = DataUtilities.calculateRowTotal(values2D, 0);
+		assertEquals("Row total should be 5.0", 5.0, result, 0.0000001d);
+	}
+
+	/**
+	 * Test calculateRowTotal with an out-of-bounds row index.
+	 */
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void testCalculateRowTotalInvalidRowIndex() {
+		DataUtilities.calculateRowTotal(values2D, 2); // Only 2 rows exist
+	}
+
+	/**
+	 * Test calculateRowTotal with an empty dataset.
+	 */
+	@Test
+	public void testCalculateRowTotalEmptyDataset() {
+		DefaultKeyedValues2D emptyValues = new DefaultKeyedValues2D();
+		double result = DataUtilities.calculateRowTotal(emptyValues, 0);
+		assertEquals("Empty dataset should return 0.0", 0.0, result, 0.0000001d);
+	}
+
+	/**
+	 * Test calculateRowTotal with a negative row index. Expected: Should throw
+	 * IndexOutOfBoundsException.
+	 */
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void testCalculateRowTotalNegativeRowIndex() {
+		DataUtilities.calculateRowTotal(values2D, -1);
+	}
+
+	/**
+	 * Test calculateRowTotal at the last valid row index.
+	 */
+	@Test
+	public void testCalculateRowTotalLastRow() {
+		DefaultKeyedValues2D multiRowValues = new DefaultKeyedValues2D();
+		multiRowValues.addValue(2.0, 0, 0);
+		multiRowValues.addValue(3.0, 0, 1);
+		multiRowValues.addValue(5.0, 1, 0);
+		multiRowValues.addValue(7.0, 1, 1);
+
+		double result = DataUtilities.calculateRowTotal(multiRowValues, 1);
+		assertEquals("Last row total should be 12.0", 12.0, result, 0.0000001d);
+	}
+
+	/**
+	 * Test calculateRowTotal when dataset contains negative values.
+	 */
+	@Test
+	public void testCalculateRowTotalWithNegativeValues() {
+		DefaultKeyedValues2D negativeValues = new DefaultKeyedValues2D();
+		negativeValues.addValue(-3.0, 0, 0);
+		negativeValues.addValue(-7.0, 0, 1);
+		double result = DataUtilities.calculateRowTotal(negativeValues, 0);
+		assertEquals("Row total should correctly sum negatives (-10.0)", -10.0, result, 0.0000001d);
+	}
+
+	/**
+	 * Test calculateRowTotal when dataset contains zeros.
+	 */
+	@Test
+	public void testCalculateRowTotalWithZeros() {
+		DefaultKeyedValues2D zeroValues = new DefaultKeyedValues2D();
+		zeroValues.addValue(0.0, 0, 0);
+		zeroValues.addValue(5.0, 0, 1);
+		zeroValues.addValue(0.0, 0, 2);
+		double result = DataUtilities.calculateRowTotal(zeroValues, 0);
+		assertEquals("Row total should be 5.0 when zeros are present", 5.0, result, 0.0000001d);
+	}
+
 }
