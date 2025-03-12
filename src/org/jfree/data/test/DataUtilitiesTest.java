@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit tests for DataUtilities class. Covers calculateColumnTotal using
- * Equivalence-Class Partitioning (ECP), Boundary-Value Analysis (BVA), and
- * Strong Equivalence-Class Testing (SECT).
+ * Unit tests for DataUtilities class. Covers calculateColumnTotal and
+ * calculateRowTotal using Equivalence-Class Partitioning (ECP), Boundary-Value
+ * Analysis (BVA), and Strong Equivalence-Class Testing (SECT).
  */
 public class DataUtilitiesTest {
 
@@ -24,6 +24,9 @@ public class DataUtilitiesTest {
 		testValues.addValue(4.0, 1, 0);
 		values2D = testValues;
 	}
+
+	// ========== Test Cases for calculateColumnTotal(Values2D data, int column)
+	// ==========
 
 	/**
 	 * Test calculateColumnTotal with valid data.
@@ -101,6 +104,9 @@ public class DataUtilitiesTest {
 		assertEquals("Column total should be 5.0 when zeros are present", 5.0, result, 0.0000001d);
 	}
 
+	// ========== Test Cases for calculateRowTotal(Values2D data, int row)
+	// ==========
+
 	/**
 	 * Test calculateRowTotal with valid data.
 	 */
@@ -177,4 +183,47 @@ public class DataUtilitiesTest {
 		assertEquals("Row total should be 5.0 when zeros are present", 5.0, result, 0.0000001d);
 	}
 
+	// ========== Test Cases for createNumberArray(double[] data) ==========
+
+	/**
+	 * Test createNumberArray with valid data.
+	 */
+	@Test
+	public void testCreateNumberArrayValidData() {
+		double[] data = { 1.0, 2.0, 3.0 };
+		Number[] result = DataUtilities.createNumberArray(data);
+		assertEquals("Array length should be 3", 3, result.length);
+		assertEquals("First element should be 1.0", 1.0, result[0]);
+	}
+
+	/**
+	 * Test createNumberArray with an empty array.
+	 */
+	@Test
+	public void testCreateNumberArrayEmptyArray() {
+		double[] data = {};
+		Number[] result = DataUtilities.createNumberArray(data);
+		assertEquals("Empty array should return an empty result", 0, result.length);
+	}
+
+	/**
+	 * Test createNumberArray with a single element.
+	 */
+	@Test
+	public void testCreateNumberArraySingleElement() {
+		double[] data = { 5.0 };
+		Number[] result = DataUtilities.createNumberArray(data);
+		assertEquals("Array length should be 1", 1, result.length);
+		assertEquals("Single element should be 5.0", 5.0, result[0]);
+	}
+
+	/**
+	 * Test createNumberArray with null input. Expected: Should throw
+	 * IllegalArgumentException.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateNumberArrayNullInput() {
+		DataUtilities.createNumberArray(null);
+	}
 }
+
