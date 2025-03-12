@@ -235,4 +235,132 @@ public class RangeTest {
 	public void testExpandNullRange() {
 		Range.expand(null, 0.5, 0.5);
 	}
+
+	// ========== Test Cases for shift(Range base, double delta, boolean
+	// allowZeroCrossing) ==========
+
+	/**
+	 * Tests shifting a range to the right (positive delta, crossing zero allowed).
+	 */
+	@Test
+	public void testShiftRight() {
+		Range shifted = Range.shift(testRange, 3, true);
+		assertEquals("Lower bound should be 5", 5.0, shifted.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 11", 11.0, shifted.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests shifting a range to the left (negative delta, crossing zero allowed).
+	 */
+	@Test
+	public void testShiftLeft() {
+		Range shifted = Range.shift(testRange, -3, true);
+		assertEquals("Lower bound should be -1", -1.0, shifted.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 5", 5.0, shifted.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests shifting a range right with zero crossing allowed.
+	 */
+	@Test
+	public void testShiftRightAllowZeroCrossing() {
+		Range shifted = Range.shift(new Range(-5, 5), 10, true);
+		assertEquals("Lower bound should be 5", 5.0, shifted.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 15", 15.0, shifted.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests shifting a range left with zero crossing prevented.
+	 */
+	@Test
+	public void testShiftLeftPreventZeroCrossing() {
+		Range shifted = Range.shift(new Range(-5, 5), -10, false);
+		assertEquals("Lower bound should be 0", 0.0, shifted.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 0", 0.0, shifted.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests shifting exactly to zero when zero crossing is not allowed.
+	 */
+	@Test
+	public void testShiftToZeroPreventCrossing() {
+		Range shifted = Range.shift(new Range(-3, 3), -3, false);
+		assertEquals("Lower bound should be 0", 0.0, shifted.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 0", 0.0, shifted.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests shifting a null range (should throw IllegalArgumentException).
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testShiftNullRange() {
+		Range.shift(null, 3, true);
+	}
+
+	// ========== Test Cases for combine(Range range1, Range range2) ==========
+
+	/**
+	 * Tests combining two overlapping ranges. Expected: The new range should span
+	 * from the lowest lower bound to the highest upper bound.
+	 */
+	@Test
+	public void testCombineOverlappingRanges() {
+		Range result = Range.combine(new Range(2, 8), new Range(5, 12));
+		assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 12", 12.0, result.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests combining two non-overlapping ranges. Expected: The new range should
+	 * extend from the lowest lower bound to the highest upper bound.
+	 */
+	@Test
+	public void testCombineNonOverlappingRanges() {
+		Range result = Range.combine(new Range(2, 5), new Range(10, 15));
+		assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 15", 15.0, result.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests combining a range that is fully inside another. Expected: The result
+	 * should be the larger outer range.
+	 */
+	@Test
+	public void testCombineOneRangeInsideAnother() {
+		Range result = Range.combine(new Range(2, 10), new Range(3, 7));
+		assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 10", 10.0, result.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests combining when the first range is `null`. Expected: It should return
+	 * the second range.
+	 */
+	@Test
+	public void testCombineFirstRangeNull() {
+		Range result = Range.combine(null, new Range(5, 10));
+		assertEquals("Lower bound should be 5", 5.0, result.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 10", 10.0, result.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests combining when the second range is `null`. Expected: It should return
+	 * the first range.
+	 */
+	@Test
+	public void testCombineSecondRangeNull() {
+		Range result = Range.combine(new Range(3, 6), null);
+		assertEquals("Lower bound should be 3", 3.0, result.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 6", 6.0, result.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests combining when both ranges are `null`. Expected: It should return
+	 * `null`.
+	 */
+	@Test
+	public void testCombineBothRangesNull() {
+		Range result = Range.combine(null, null);
+		assertNull("Result should be null", result);
+	}
 }
