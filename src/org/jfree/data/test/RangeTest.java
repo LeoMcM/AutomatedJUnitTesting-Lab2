@@ -175,4 +175,64 @@ public class RangeTest {
 	public void testIntersectsExtremeRange() {
 		assertTrue("Range (2,8) should intersect with a massive range (-1000,1000)", testRange.intersects(-1000, 1000));
 	}
+
+// ========== Test Cases for expand(Range range, double lowerMargin, double upperMargin) ==========
+
+	/**
+	 * Expands a range normally with positive lower and upper margins.
+	 */
+	@Test
+	public void testExpandNormalExpansion() {
+		Range expanded = Range.expand(testRange, 0.5, 0.25);
+		assertEquals("Lower bound should be -1", -1.0, expanded.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 9.5", 9.5, expanded.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests expansion with zero margins (range should remain unchanged).
+	 */
+	@Test
+	public void testExpandNoChange() {
+		Range expanded = Range.expand(testRange, 0.0, 0.0);
+		assertEquals("Lower bound should remain 2", 2.0, expanded.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should remain 8", 8.0, expanded.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests negative margins (contracts instead of expanding).
+	 */
+	@Test
+	public void testExpandNegativeMargins() {
+		Range expanded = Range.expand(testRange, -0.5, -0.5);
+		assertEquals("Lower bound should be 4", 4.0, expanded.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 6", 6.0, expanded.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests a huge expansion (100% increase).
+	 */
+	@Test
+	public void testExpandHugeExpansion() {
+		Range expanded = Range.expand(testRange, 1.0, 1.0);
+		assertEquals("Lower bound should be -4", -4.0, expanded.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 14", 14.0, expanded.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests negative lower margin and positive upper margin.
+	 */
+	@Test
+	public void testExpandMixedMargins() {
+		Range expanded = Range.expand(testRange, -0.25, 0.5);
+		assertEquals("Lower bound should be 3.5", 3.5, expanded.getLowerBound(), 0.00001);
+		assertEquals("Upper bound should be 11", 11.0, expanded.getUpperBound(), 0.00001);
+	}
+
+	/**
+	 * Tests expansion with a null input (should throw IllegalArgumentException).
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testExpandNullRange() {
+		Range.expand(null, 0.5, 0.5);
+	}
 }
