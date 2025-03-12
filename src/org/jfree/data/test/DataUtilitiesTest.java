@@ -2,7 +2,9 @@ package org.jfree.data.test;
 
 import static org.junit.Assert.*;
 import org.jfree.data.DataUtilities;
+import org.jfree.data.DefaultKeyedValues;
 import org.jfree.data.DefaultKeyedValues2D;
+import org.jfree.data.KeyedValues;
 import org.jfree.data.Values2D;
 import org.junit.Before;
 import org.junit.Test;
@@ -281,5 +283,75 @@ public class DataUtilitiesTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateNumberArray2DNullInput() {
 		DataUtilities.createNumberArray2D(null);
+	}
+
+	// ========== Test Cases for getCumulativePercentages(KeyedValues data)
+	// ==========
+
+	/**
+	 * Test getCumulativePercentages with valid data.
+	 */
+	@Test
+	public void testGetCumulativePercentagesValidData() {
+		DefaultKeyedValues data = new DefaultKeyedValues();
+		data.addValue("A", 2);
+		data.addValue("B", 3);
+		data.addValue("C", 5);
+
+		KeyedValues result = DataUtilities.getCumulativePercentages(data);
+
+		assertEquals("Cumulative percentage for A should be 0.2", 0.2, result.getValue("A").doubleValue(), 0.0001);
+		assertEquals("Cumulative percentage for B should be 0.5", 0.5, result.getValue("B").doubleValue(), 0.0001);
+		assertEquals("Cumulative percentage for C should be 1.0", 1.0, result.getValue("C").doubleValue(), 0.0001);
+	}
+
+	/**
+	 * Test getCumulativePercentages with an empty dataset.
+	 */
+	@Test
+	public void testGetCumulativePercentagesEmptyData() {
+		DefaultKeyedValues data = new DefaultKeyedValues();
+		KeyedValues result = DataUtilities.getCumulativePercentages(data);
+		assertEquals("Empty dataset should return zero length", 0, result.getItemCount());
+	}
+
+	/**
+	 * Test getCumulativePercentages with a single entry.
+	 */
+	@Test
+	public void testGetCumulativePercentagesSingleEntry() {
+		DefaultKeyedValues data = new DefaultKeyedValues();
+		data.addValue("A", 10);
+
+		KeyedValues result = DataUtilities.getCumulativePercentages(data);
+		assertEquals("Single entry should be 100% (1.0)", 1.0, result.getValue("A").doubleValue(), 0.0001);
+	}
+
+	/**
+	 * Test getCumulativePercentages with negative values.
+	 */
+	@Test
+	public void testGetCumulativePercentagesNegativeValues() {
+		DefaultKeyedValues data = new DefaultKeyedValues();
+		data.addValue("A", -3);
+		data.addValue("B", 6);
+		data.addValue("C", -2);
+
+		KeyedValues result = DataUtilities.getCumulativePercentages(data);
+
+		assertEquals("Cumulative percentage for A should be -0.3333", -0.3333, result.getValue("A").doubleValue(),
+				0.0001);
+		assertEquals("Cumulative percentage for B should be 0.3333", 0.3333, result.getValue("B").doubleValue(),
+				0.0001);
+		assertEquals("Cumulative percentage for C should be 1.0", 1.0, result.getValue("C").doubleValue(), 0.0001);
+	}
+
+	/**
+	 * Test getCumulativePercentages with null input. Expected: Should throw
+	 * IllegalArgumentException.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetCumulativePercentagesNullInput() {
+		DataUtilities.getCumulativePercentages(null);
 	}
 }
