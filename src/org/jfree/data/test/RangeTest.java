@@ -203,10 +203,21 @@ public class RangeTest {
 	 */
 	@Test
 	public void testExpandNegativeMargins() {
-		Range expanded = Range.expand(testRange, -0.5, -0.5);
-		assertEquals("Lower bound should be 4", 4.0, expanded.getLowerBound(), 0.00001);
-		assertEquals("Upper bound should be 6", 6.0, expanded.getUpperBound(), 0.00001);
+	    try {
+	        Range expanded = Range.expand(testRange, -0.5, -0.5);
+	   
+	        double rangeLength = testRange.getLength(); // 6
+	        double expectedLower = testRange.getLowerBound() + (rangeLength * 0.5); // 2 + 3 = 5
+	        double expectedUpper = testRange.getUpperBound() - (rangeLength * 0.5); // 8 - 3 = 5
+
+	        assertEquals("Lower bound should be " + expectedLower, expectedLower, expanded.getLowerBound(), 0.00001);
+	        assertEquals("Upper bound should be " + expectedUpper, expectedUpper, expanded.getUpperBound(), 0.00001);
+	    } catch (Exception e) {
+	        fail("Unexpected exception in testExpandNegativeMargins: " + e.getMessage());
+	    }
 	}
+
+
 
 	/**
 	 * Tests a huge expansion (100% increase).
@@ -292,44 +303,62 @@ public class RangeTest {
 	/**
 	 * Tests shifting a null range (should throw IllegalArgumentException).
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testShiftNullRange() {
-		Range.shift(null, 3, true);
+	    try {
+	        Range.shift(null, 3, true);
+	        fail("Expected IllegalArgumentException for shifting null range, but no exception was thrown.");
+	    } catch (IllegalArgumentException e) {
+	        // Expected behavior: test passes.
+	    } catch (Exception e) {
+	        fail("Unexpected exception type in testShiftNullRange: " + e.getMessage());
+	    }
 	}
 
 	// ========== Test Cases for combine(Range range1, Range range2) ==========
 
 	/**
-	 * Tests combining two overlapping ranges. Expected: The new range should span
-	 * from the lowest lower bound to the highest upper bound.
+	 * Tests combining two overlapping ranges.
 	 */
 	@Test
 	public void testCombineOverlappingRanges() {
-		Range result = Range.combine(new Range(2, 8), new Range(5, 12));
-		assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
-		assertEquals("Upper bound should be 12", 12.0, result.getUpperBound(), 0.00001);
+	    try {
+	        Range result = Range.combine(new Range(2, 8), new Range(5, 12));
+	        assertNotNull("Result should not be null", result);
+	        assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
+	        assertEquals("Upper bound should be 12", 12.0, result.getUpperBound(), 0.00001);
+	    } catch (Exception e) {
+	        fail("Unexpected exception in testCombineOverlappingRanges: " + e.getMessage());
+	    }
 	}
-
 	/**
-	 * Tests combining two non-overlapping ranges. Expected: The new range should
-	 * extend from the lowest lower bound to the highest upper bound.
+	 * Tests combining two non-overlapping ranges.
 	 */
 	@Test
 	public void testCombineNonOverlappingRanges() {
-		Range result = Range.combine(new Range(2, 5), new Range(10, 15));
-		assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
-		assertEquals("Upper bound should be 15", 15.0, result.getUpperBound(), 0.00001);
+	    try {
+	        Range result = Range.combine(new Range(2, 5), new Range(10, 15));
+	        assertNotNull("Result should not be null", result);
+	        assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
+	        assertEquals("Upper bound should be 15", 15.0, result.getUpperBound(), 0.00001);
+	    } catch (Exception e) {
+	        fail("Unexpected exception in testCombineNonOverlappingRanges: " + e.getMessage());
+	    }
 	}
 
 	/**
-	 * Tests combining a range that is fully inside another. Expected: The result
-	 * should be the larger outer range.
+	 * Tests combining a range that is fully inside another.
 	 */
 	@Test
 	public void testCombineOneRangeInsideAnother() {
-		Range result = Range.combine(new Range(2, 10), new Range(3, 7));
-		assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
-		assertEquals("Upper bound should be 10", 10.0, result.getUpperBound(), 0.00001);
+	    try {
+	        Range result = Range.combine(new Range(2, 10), new Range(3, 7));
+	        assertNotNull("Result should not be null", result);
+	        assertEquals("Lower bound should be 2", 2.0, result.getLowerBound(), 0.00001);
+	        assertEquals("Upper bound should be 10", 10.0, result.getUpperBound(), 0.00001);
+	    } catch (Exception e) {
+	        fail("Unexpected exception in testCombineOneRangeInsideAnother: " + e.getMessage());
+	    }
 	}
 
 	/**
