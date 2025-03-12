@@ -225,5 +225,61 @@ public class DataUtilitiesTest {
 	public void testCreateNumberArrayNullInput() {
 		DataUtilities.createNumberArray(null);
 	}
-}
 
+// ========== Test Cases for createNumberArray2D(double[][] data) ==========
+
+	/**
+	 * Test createNumberArray2D with valid 2D array data.
+	 */
+	@Test
+	public void testCreateNumberArray2DValidData() {
+		double[][] data = { { 1.0, 2.0 }, { 3.0, 4.0 } };
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		assertEquals("Array should have 2 rows", 2, result.length);
+		assertEquals("First row should have 2 elements", 2, result[0].length);
+		assertEquals("First element should be 1.0", 1.0, result[0][0]);
+	}
+
+	/**
+	 * Test createNumberArray2D with an empty 2D array.
+	 */
+	@Test
+	public void testCreateNumberArray2DEmptyArray() {
+		double[][] data = {};
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		assertEquals("Empty 2D array should return an empty result", 0, result.length);
+	}
+
+	/**
+	 * Test createNumberArray2D with a single row.
+	 */
+	@Test
+	public void testCreateNumberArray2DSingleRow() {
+		double[][] data = { { 1.0, 2.0, 3.0 } };
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		assertEquals("Array should have 1 row", 1, result.length);
+		assertEquals("Row should have 3 elements", 3, result[0].length);
+		assertEquals("First element should be 1.0", 1.0, result[0][0]);
+	}
+
+	/**
+	 * Test createNumberArray2D with a single column.
+	 */
+	@Test
+	public void testCreateNumberArray2DSingleColumn() {
+		double[][] data = { { 1.0 }, { 2.0 }, { 3.0 } };
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		assertEquals("Array should have 3 rows", 3, result.length);
+		assertEquals("First row should have 1 element", 1, result[0].length);
+		assertEquals("First element should be 1.0", 1.0, result[0][0]);
+	}
+
+	/**
+	 * Test createNumberArray2D with null input. Expected: Should throw
+	 * IllegalArgumentException.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateNumberArray2DNullInput() {
+		DataUtilities.createNumberArray2D(null);
+	}
+}
